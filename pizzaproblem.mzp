@@ -1,0 +1,34 @@
+{
+    "openFiles": [
+        "pizza1.mzn",
+        "pizza2.mzn",
+        "test1.dzn",
+        "test2.dzn",
+        "test3.dzn",
+        "test4.dzn",
+        "test5.dzn",
+        "test6.dzn",
+        "test7.dzn",
+        "test8.dzn",
+        "test9.dzn",
+        "test10.dzn"
+    ],
+    "openTab": 1,
+    "projectFiles": [
+        "pizza1.mzn",
+        "pizza2.mzn",
+        "test1.dzn",
+        "test10.dzn",
+        "test2.dzn",
+        "test3.dzn",
+        "test4.dzn",
+        "test5.dzn",
+        "test6.dzn",
+        "test7.dzn",
+        "test8.dzn",
+        "test9.dzn"
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.3.0",
+    "version": 106
+}

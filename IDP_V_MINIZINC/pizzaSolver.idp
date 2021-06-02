@@ -1,0 +1,103 @@
+vocabulary V {
+    type cpindex isa int	 // Coupon identifier
+    type pindex isa int		// pizza identifier
+    type num isa int
+
+    //constants
+    n : pindex				// total number of pizzas
+    m : cpindex				// total number of coupons
+    cost : num				// cost of buying pizzas
+    
+    //functions
+    price(pindex): num		// price of pizza
+    buy(cpindex)  : num		// number of pizzas to buy to use coupons
+    free(cpindex) : num		// number of pizzas you get if use coupons
+
+    //predicates
+    V(cpindex)				// if true, coupon used
+    Justify(cpindex,pindex)	// pizza paid for to use coupon
+    Apply(cpindex,pindex)  	// pizza you got for free when using coupon
+}
+
+
+theory T : V{  
+//1 if a coupon is applied, we have at least one pizza for free
+    ! v : V(v) <=> ? p : Apply(v,p).
+    
+//2 if a coupon is applied, we have bought at least one pizza
+    ! v : V(v) <=> ? p : Justify(v,p).    
+    
+//3 if a coupon is applied, you must buy reqd number pizzas
+    ! v : V(v) => #{p[pindex] : Justify(v,p)} >= buy(v).
+
+//4 if a coupon applied, you don't get more free pizzas than allowed
+    ! v : V(v) => #{p[pindex] : Apply(v,p)} =< free(v).
+
+//5 cannot get most expensive pizza for free
+    ! v[cpindex] p1[pindex] p2[pindex] : Justify(v,p1) & Apply(v,p2) => price(p2) =< price(p1).
+
+    // calculate total cost as sum of price of paid pizzas 
+    cost = sum{ p[pindex] : ~?v[cpindex] : Apply(v,p) : price(p)}.
+ 
+//6 each pizza can only be used to justify at most 1 coupon
+    ! p : ?=<1 v : Justify(v,p).
+
+//7 if coupon is not used, no pizzas are bought to justify that coupon
+    ! v : ~V(v) <=> ! p : ~Justify(v,p).  
+    
+//8 if a pizza is used to justify a coupon, then it was paid for
+    ! p v : Justify(v,p) => ~? v2 : Apply(v2,p).
+//9 if a pizza is free by applying a coupon, then you didn't pay for it
+    ! p v : Apply(v,p) => ~? v2 : Justify(v2,p).
+}
+
+term t: V {
+	cost
+}
+
+vocabulary Vout {
+    extern V::cost/0:1
+}
+
+
+structure S : V {
+    num = {1..400}
+    
+    n = 5
+    pindex = {1..5}
+    m = 5
+    cpindex = {1..5}
+    price = {
+        1-> 100;
+        2-> 90;
+        3->25;
+        4-> 10;
+        5-> 50
+
+        
+        
+    }
+    buy = {
+        1-> 2;
+        2-> 2;
+        3-> 2;
+        4-> 2;
+        5-> 2
+       
+    }
+    free = {
+        1-> 1;
+        2-> 1;
+        3-> 1;
+        4-> 1;
+        5-> 1
+        
+    }
+}
+
+
+procedure main(){
+    stdoptions.verbosity.solving = 1
+    // only return 1 model with the best cost
+    printmodels(minimize(T,S,t,Vout))
+}
